@@ -1,3 +1,4 @@
+import "./App.css";
 import { useEffect, useState } from "react";
 import { loadNotifications } from "./services/api";
 import { getPriorityList } from "./utils/priority";
@@ -5,34 +6,36 @@ import { getPriorityList } from "./utils/priority";
 function App() {
   const [notifications, setNotifications] = useState([]);
   const [filter, setFilter] = useState("All");
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
     const fetchData = async () => {
-      const data = await loadNotifications();
+      const data = await loadNotifications(
+        page,
+        10,
+        filter
+      );
+
       setNotifications(data);
     };
 
     fetchData();
-  }, []);
-
-  const filteredNotifications =
-    filter === "All"
-      ? notifications
-      : notifications.filter(
-          (item) => item.Type === filter
-        );
+  }, [page, filter]);
 
   const priorityNotifications =
-    getPriorityList(filteredNotifications, 10);
+    getPriorityList(notifications, 10);
 
   const markAsViewed = (id) => {
     const viewed =
       JSON.parse(
-        localStorage.getItem("viewedNotifications")
+        localStorage.getItem(
+          "viewedNotifications"
+        )
       ) || [];
 
     if (!viewed.includes(id)) {
       viewed.push(id);
+
       localStorage.setItem(
         "viewedNotifications",
         JSON.stringify(viewed)
@@ -43,22 +46,23 @@ function App() {
   const isViewed = (id) => {
     const viewed =
       JSON.parse(
-        localStorage.getItem("viewedNotifications")
+        localStorage.getItem(
+          "viewedNotifications"
+        )
       ) || [];
 
     return viewed.includes(id);
   };
 
   return (
-    <div style={{ padding: "25px" }}>
+    <div className="container">
       <h1>Notification Dashboard</h1>
 
       <select
         value={filter}
-        onChange={(e) => setFilter(e.target.value)}
-        style={{
-          padding: "8px",
-          marginBottom: "20px",
+        onChange={(e) => {
+          setFilter(e.target.value);
+          setPage(1);
         }}
       >
         <option>All</option>
@@ -69,32 +73,76 @@ function App() {
 
       <h2>Priority Notifications</h2>
 
-      {priorityNotifications.map((notification) => (
+      {priorityNotifications.map(
+        (notification) => (
+          <div
+            key={notification.ID}
+            className="notification-card"
+            onClick={() =>
+              markAsViewed(notification.ID)
+            }
+          >
+            <h3>{notification.Type}</h3>
+
+            <p>{notification.Message}</p>
+
+            <small>
+              {notification.Timestamp}
+            </small>
+
+            <div>
+              {isViewed(notification.ID) ? (
+                <span className="viewed-badge">
+                  Viewed
+                </span>
+              ) : (
+                <span className="new-badge">
+                  New
+                </span>
+              )}
+            </div>
+          </div>
+        )
+      )}
+
+      <h2>All Notifications</h2>
+
+      {notifications.map((notification) => (
         <div
           key={notification.ID}
-          onClick={() =>
-            markAsViewed(notification.ID)
-          }
-          style={{
-            border: "1px solid #ccc",
-            padding: "12px",
-            marginBottom: "12px",
-            borderRadius: "8px",
-          }}
+          className="notification-card"
         >
           <h3>{notification.Type}</h3>
 
           <p>{notification.Message}</p>
 
-          <small>{notification.Timestamp}</small>
-
-          <div>
-            {isViewed(notification.ID)
-              ? "Viewed"
-              : "New"}
-          </div>
+          <small>
+            {notification.Timestamp}
+          </small>
         </div>
       ))}
+
+      <div className="pagination">
+        <button
+          onClick={() =>
+            setPage((prev) =>
+              Math.max(prev - 1, 1)
+            )
+          }
+        >
+          Previous
+        </button>
+
+        <span>Page {page}</span>
+
+        <button
+          onClick={() =>
+            setPage((prev) => prev + 1)
+          }
+        >
+          Next
+        </button>
+      </div>
     </div>
   );
 }

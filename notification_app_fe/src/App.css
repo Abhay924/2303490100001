@@ -1,28 +1,91 @@
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
-  background: #f4f4f4;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #f4f6f9;
 }
 
 .container {
-  max-width: 1000px;
+  max-width: 1200px;
   margin: auto;
   padding: 20px;
 }
 
-.card {
-  background: white;
-  border-radius: 8px;
-  padding: 15px;
-  margin-bottom: 15px;
-  border: 1px solid #ddd;
+h1 {
+  text-align: center;
+  margin-bottom: 25px;
 }
 
-.new {
+h2 {
+  text-align: center;
+  margin: 25px 0;
+}
+
+select {
+  display: block;
+  margin: auto;
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 6px;
+}
+
+.notification-card {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 15px;
+  text-align: center;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.notification-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 3px 10px
+    rgba(0, 0, 0, 0.1);
+}
+
+.new-badge {
   color: green;
   font-weight: bold;
 }
 
-.viewed {
+.viewed-badge {
   color: gray;
+  font-weight: bold;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.pagination button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 5px;
+  background: #1976d2;
+  color: white;
+  cursor: pointer;
+}
+
+.pagination button:hover {
+  background: #1259a7;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 12px;
+  }
+
+  h1 {
+    font-size: 28px;
+  }
+
+  .notification-card {
+    padding: 12px;
+  }
 }
